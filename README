@@ -1,0 +1,33 @@
+Example project to demonstrate my issue with using certain extensions with
+minitest-spec-rails.
+
+Steps to reproduce:
+
+1. rails new minitest-spec-test
+2. add minitest-spec-rails and minitest-around to :test group in Gemfile
+3. bundle update
+4. rails generate controller Posts index
+5. write test using `around` with spec syntax
+
+If you replace the contents of `test/controllers/posts_controller_test.rb` with
+the non-spec syntax, everything works as expected. The issue is something to do
+with injecting on `MiniTest::Spec`. This is not specific to `minitest-around`.
+
+# this works fine
+require 'test_helper'
+require 'minitest/around/unit'
+
+class PostsControllerTest < ActionController::TestCase
+
+  def around
+    puts ">>> around (before)"
+    yield
+    puts ">>> around (after)"
+  end
+
+  test "should call around block" do
+    get :index
+    assert_response :success
+  end
+
+end
